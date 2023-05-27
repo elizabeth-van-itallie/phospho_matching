@@ -17,29 +17,30 @@ number_workers = int(config.get("phos_match_config", "number_workers"))
 
 blast_output_files = "blast_output_files"
 blast_input = "blast_input_files"
-output_files = "outputs"
+#output_files = "output_files"
+#checkpoint_files = "checkpoint_files"
 
 rule all:
     input:
         filtered_match_file,
-        "packages_loaded.txt"
+        "checkpoint_files/packages_loaded.txt"
     shell:
         "echo snakemake pipeline done"
 
 rule setup_folders:
     input:
-        "packages_loaded.txt",
+        "checkpoint_files/packages_loaded.txt"
     output:
         directory(blast_input),
         directory(blast_output_files)
     params:
-        folders = [blast_output_files, blast_input, "checkpoint_files"]
+        folders = [blast_output_files, blast_input, "outputs", "checkpoint_files"]
     script:
         "scripts/setup_folders.py"
 
 rule install_packages:
     output:
-        "packages_loaded.txt"
+        "checkpoint_files/packages_loaded.txt"
     script:
         "scripts/install_packages.py"
 
@@ -97,19 +98,18 @@ rule compile_results:
      script:
         "scripts/step2_match.py"
 
-
 rule motif_score:
     input:
         output_match_file
     params:
         input_file = output_match_file,
         FDR = fdr_cutoff,
-        output_bar = "sites_bar.pdf",
-        output_FDR = "cutoff_FDR.pdf",
+        output_bar = "outputs/sites_bar.pdf",
+        output_FDR = "outputs/cutoff_FDR.pdf",
         output_file = filtered_match_file
     output:
-        "sites_bar.pdf",
-        "cutoff_FDR.pdf",
+        "outputs/sites_bar.pdf",
+        "outputs/cutoff_FDR.pdf",
         filtered_match_file
     shell:
         "python3 scripts/motif_score.py {params.input_file} {params.output_bar} \
