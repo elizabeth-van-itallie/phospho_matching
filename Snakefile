@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+
+import configparser
+import subprocess
+
+config = configparser.ConfigParser()
+config.read("phos_match.config")
+
+file_sites_in = config.get("phos_match_config", "file_sites_in")
+fasta_file = config.get("phos_match_config", "fasta_file")
+output_match_file = config.get("phos_match_config", "output_match_file")
+filtered_match_file = config.get("phos_match_config", "filtered_match_file")
+human_fasta_noIso = config.get("phos_match_config", "human_fasta_noIso")
+fdr_cutoff = float(config.get("phos_match_config", "fdr_cutoff"))
+b_eval = float(config.get("phos_match_config", "b_eval"))
+number_workers = int(config.get("phos_match_config", "number_workers"))
+
+blast_output_files = "blast_output_files"
+blast_input = "blast_input_files"
+output_files = "outputs"
+
+rule all:
+    input:
+        filtered_match_file,
+        "packages_loaded.txt"
+    shell:
+        "echo snakemake pipeline done"
+
+rule setup_folders:
+    input:
+        "packages_loaded.txt",
+    output:
+        directory(blast_input),
+        directory(blast_output_files)
+    params:
+        folders = [blast_output_files, blast_input, "checkpoint_files"]
+    script:
+        "scripts/setup_folders.py"
+
+rule install_packages:
+    output:
+        "packages_loaded.txt"
+    script:
+        "scripts/install_packages.py"
+
+rule human_no_iso:
+    input:
+        "fastas/human-phosphosite-fastas.fasta"
+    output:
+        human_fasta_noIso
+    script:
+        "scripts/to_no_iso.py"
+
+rule make_single_fastas:
+    input:
+        fasta_file,
+        file_sites_in,
+        blast_input
+    output:
+        "checkpoint_files/single_fastas.txt"
+    script:
+        "scripts/blast_file_setup.py"
+
+rule blast:
+    input:
+        "checkpoint_files/single_fastas.txt"
+    output:
+        "checkpoint_files/blast.txt"
+    params:
+        input_phos = file_sites_in,
+        input_phos_ref_col = 0,
+        input_phos_res_col = 1,
+        input_phos_sep = "'\t'",
+        input_files = blast_input,
+        human_fasta = human_fasta_noIso,
+        output_files = blast_output_files,
+        eval = b_eval,
+        blast_FMT = "'7 qacc sacc pident length mismatch gapopen qstart qend sstart send evalue btop'",
+        num_workers = number_workers
+
+    shell:
+        "python3 scripts/step1_blast.py {params.input_phos} \
+         {params.input_phos_ref_col} {params.input_phos_res_col} \
+          {params.input_phos_sep} {params.input_files} {params.human_fasta}\
+           {params.output_files} {params.eval} \
+            {params.blast_FMT} {params.num_workers}"
+
+rule compile_results:
+     input:
+        file_sites_in,
+        blast_output_files,
+        fasta_file,
+        human_fasta_noIso,
+        "checkpoint_files/blast.txt"
+     output:
+        output_match_file
+     script:
+        "scripts/step2_match.py"
+
+
+rule motif_score:
+    input:
+        output_match_file
+    params:
+        input_file = output_match_file,
+        FDR = fdr_cutoff,
+        output_bar = "sites_bar.pdf",
+        output_FDR = "cutoff_FDR.pdf",
+        output_file = filtered_match_file
+    output:
+        "sites_bar.pdf",
+        "cutoff_FDR.pdf",
+        filtered_match_file
+    shell:
+        "python3 scripts/motif_score.py {params.input_file} {params.output_bar} \
+         {params.FDR} {params.output_FDR} {params.output_file}"

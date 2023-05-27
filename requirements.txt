@@ -1,0 +1,6 @@
+Bio~=1.5.9
+biopython~=1.78
+fastaparser~=1.1.1
+matplotlib~=3.7.1
+numpy~=1.24.3
+pandas~=2.0.1
