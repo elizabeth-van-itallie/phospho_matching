@@ -1,5 +1,0 @@
-# BLASTP 2.9.0+
-# Query: gnl|gene40201|XL-9_2-gene40201|rna82099|
-# Database: User specified sequence set (Input: fastas/human-fasta-NO-ISO.fasta)
-# 0 hits found
-# BLAST processed 1 queries
