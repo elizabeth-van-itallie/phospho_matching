@@ -1,0 +1,7 @@
+# BLASTP 2.9.0+
+# Query: gnl|gene12108|XL-9_2-gene12108|rna35174|
+# Database: User specified sequence set (Input: fastas/human-fasta-NO-ISO.fasta)
+# Fields: query acc., subject acc., % identity, alignment length, mismatches, gap opens, q. start, q. end, s. start, s. end, evalue, BTOP
+# 1 hits found
+gnl|gene12108|XL-9_2-gene12108|rna35174|	GN:NUCKS1|NUCKS|human|Q9H1E3	58.054	298	65	7	1	293	1	243	5.40e-60	17DE3-A-D4KRED1AG2LT2AI1RS1SP2VA1EN12DEED2ED2TV1KTPK1KDEDGSDH3E-D-F-G-S-G-D-D-L-A-E-G-D-G-K-A-D-S-D-Y-E-S-P-K-R-S-K-K-G-K-K-P-T-P-D-K-K-R-A-S-K-Q-R-K-R-S-A-Q-D-2DE3HE-DRH13VA8GE1GV3DE1EQQE2EDD-2QP1LQ10MLVM9RS4KN1IKVMKV1SKKS-K6RKVM15AG3-VSG2AT4PS3ST4AE1ED2EP1DSEPEPP-V-T-P-P-PEEK1KT3SP1QP5DEVG1DEED2QP1TG2
+# BLAST processed 1 queries
