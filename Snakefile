@@ -8,21 +8,23 @@ config.read("phos_match.config")
 
 file_sites_in = config.get("phos_match_config", "file_sites_in")
 fasta_file = config.get("phos_match_config", "fasta_file")
-output_match_file = config.get("phos_match_config", "output_match_file")
-filtered_match_file = config.get("phos_match_config", "filtered_match_file")
 human_fasta_noIso = config.get("phos_match_config", "human_fasta_noIso")
+
 fdr_cutoff = float(config.get("phos_match_config", "fdr_cutoff"))
 b_eval = float(config.get("phos_match_config", "b_eval"))
 number_workers = int(config.get("phos_match_config", "number_workers"))
 
+output_match_file = config.get("phos_match_config", "output_match_file")
+filtered_match_file = config.get("phos_match_config", "filtered_match_file")
+pp_info_file = config.get("phos_match_config", "pp_info_file")
+filtered_match_info_file = config.get("phos_match_config", "filtered_match_info_file")
+
 blast_output_files = "blast_output_files"
 blast_input = "blast_input_files"
-#output_files = "output_files"
-#checkpoint_files = "checkpoint_files"
 
 rule all:
     input:
-        filtered_match_file,
+        filtered_match_info_file,
         "checkpoint_files/packages_loaded.txt"
     shell:
         "echo snakemake pipeline done"
@@ -114,3 +116,12 @@ rule motif_score:
     shell:
         "python3 scripts/motif_score.py {params.input_file} {params.output_bar} \
          {params.FDR} {params.output_FDR} {params.output_file}"
+
+rule get_pp_info:
+    input:
+        pp_info_file,
+        filtered_match_file
+    output:
+        filtered_match_info_file
+    script:
+        "scripts/get_pp_info.py"
