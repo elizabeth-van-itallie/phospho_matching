@@ -52,7 +52,6 @@ def plot_cutoff(matches_only, mmatches_only, cutoff, cum_fdr, fig_FDR):
     ax.legend(bbox_to_anchor=(1.1, 0.6))
     ax.set_ylim(bottom = 0)
 
-    #plt.show()
 
     fig.savefig(fig_FDR, bbox_inches='tight')
 

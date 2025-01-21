@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
 
+# export PATH=$PATH:/Users/evanitallie/ncbi-blast-2.5.0+/bin/
+# conda activate snakemake
+# snakemake --cores 3
+
 import configparser
 import subprocess
 
 config = configparser.ConfigParser()
 config.read("phos_match.config")
 
-file_sites_in = config.get("phos_match_config", "file_sites_in")
-fasta_file = config.get("phos_match_config", "fasta_file")
-human_fasta_noIso = config.get("phos_match_config", "human_fasta_noIso")
+file_sites_in = config.get("phos_match_config_REAL", "file_sites_in")
+fasta_file = config.get("phos_match_config_REAL", "fasta_file")
+human_fasta_noIso = config.get("phos_match_config_REAL", "human_fasta_noIso")
 
-fdr_cutoff = float(config.get("phos_match_config", "fdr_cutoff"))
-b_eval = float(config.get("phos_match_config", "b_eval"))
-number_workers = int(config.get("phos_match_config", "number_workers"))
+fdr_cutoff = float(config.get("phos_match_config_REAL", "fdr_cutoff"))
+b_eval = float(config.get("phos_match_config_REAL", "b_eval"))
+number_workers = int(config.get("phos_match_config_REAL", "number_workers"))
 
-output_match_file = config.get("phos_match_config", "output_match_file")
-filtered_match_file = config.get("phos_match_config", "filtered_match_file")
-pp_info_file = config.get("phos_match_config", "pp_info_file")
-filtered_match_info_file = config.get("phos_match_config", "filtered_match_info_file")
+output_match_file = config.get("phos_match_config_REAL", "output_match_file")
+filtered_match_file = config.get("phos_match_config_REAL", "filtered_match_file")
+pp_info_file = config.get("phos_match_config_REAL", "pp_info_file")
+filtered_match_info_file = config.get("phos_match_config_REAL",\
+ "filtered_match_info_file")
 
 blast_output_files = "blast_output_files"
 blast_input = "blast_input_files"
@@ -125,3 +130,5 @@ rule get_pp_info:
         filtered_match_info_file
     script:
         "scripts/get_pp_info.py"
+
+# have a clean RULE 
